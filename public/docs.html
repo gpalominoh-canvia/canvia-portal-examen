@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Documentación de la API · Canvia Market</title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+<header class="barra">
+  <div class="barra-interior">
+    <a class="marca" href="/" aria-label="Canvia Market, inicio">
+      <img src="/img/logo-canvia-blanco.svg" alt="Canvia">
+      <span>Market</span>
+    </a>
+    <nav class="menu" aria-label="Principal">
+      <a href="/catalogo" data-pagina="catalogo">Tienda</a>
+      <a href="/docs" data-pagina="docs" class="activo">Documentación de la API</a>
+      <a href="/examen" data-pagina="examen">Examen</a>
+    </nav>
+    <div class="usuario">
+      <a class="boton-salir" href="/" style="text-decoration:none">Ingresar</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="doc">
+    <nav class="indice" aria-label="Contenido de la documentación">
+      <h4>Introducción</h4>
+      <a href="#inicio">Visión general</a>
+      <a href="#autenticacion">Autenticación</a>
+      <a href="#errores">Errores y códigos</a>
+      <a href="#usuarios">Usuarios de prueba</a>
+      <h4>Sistema</h4>
+      <a href="#salud"><span class="metodo m-get">GET</span>/api/salud</a>
+      <a href="#reset"><span class="metodo m-post">POST</span>/api/reset</a>
+      <a href="#auth"><span class="metodo m-post">POST</span>/api/auth</a>
+      <h4>Productos</h4>
+      <a href="#productos-listar"><span class="metodo m-get">GET</span>/api/productos</a>
+      <a href="#productos-obtener"><span class="metodo m-get">GET</span>/api/productos/:id</a>
+      <a href="#productos-crear"><span class="metodo m-post">POST</span>/api/productos</a>
+      <a href="#productos-reemplazar"><span class="metodo m-put">PUT</span>/api/productos/:id</a>
+      <a href="#productos-modificar"><span class="metodo m-patch">PATCH</span>/api/productos/:id</a>
+      <a href="#productos-eliminar"><span class="metodo m-delete">DEL</span>/api/productos/:id</a>
+      <a href="#categorias"><span class="metodo m-get">GET</span>/api/categorias</a>
+      <h4>Pedidos</h4>
+      <a href="#pedidos-listar"><span class="metodo m-get">GET</span>/api/pedidos</a>
+      <a href="#pedidos-crear"><span class="metodo m-post">POST</span>/api/pedidos</a>
+      <a href="#pedidos-obtener"><span class="metodo m-get">GET</span>/api/pedidos/:id</a>
+      <a href="#pedidos-estado"><span class="metodo m-patch">PATCH</span>/api/pedidos/:id</a>
+      <a href="#pedidos-cancelar"><span class="metodo m-delete">DEL</span>/api/pedidos/:id</a>
+      <h4>Referencia</h4>
+      <a href="#modelos">Modelos de datos</a>
+      <a href="#reglas">Reglas de negocio</a>
+    </nav>
+
+    <div class="contenido">
+      <section id="inicio">
+        <span class="rotulo">Referencia de la API · v1</span>
+        <h1>API del Portal Canvia Market</h1>
+        <p class="lead">API REST en JSON para gestionar el catálogo de productos y los pedidos de los clientes de Canvia Market. Es la misma API que consume la tienda web.</p>
+        <table class="tabla-doc">
+          <tr><th>Elemento</th><th>Valor</th></tr>
+          <tr><td>URL base</td><td><code>http://localhost:3000</code> (o la que expone la action en la CI)</td></tr>
+          <tr><td>Prefijo</td><td><code>/api</code></td></tr>
+          <tr><td>Formato</td><td>JSON en UTF-8. Envía <code>Content-Type: application/json</code> en las peticiones con cuerpo.</td></tr>
+          <tr><td>Montos</td><td>Soles (PEN), número con hasta 2 decimales.</td></tr>
+          <tr><td>Fechas</td><td>ISO 8601 en UTC, por ejemplo <code>2026-10-30T15:04:05.000Z</code>.</td></tr>
+          <tr><td>Persistencia</td><td>En memoria. Se pierde al reiniciar el servidor y se restaura con <code>POST /api/reset</code>.</td></tr>
+        </table>
+      </section>
+
+      <section id="autenticacion">
+        <h2>Autenticación</h2>
+        <p>Las operaciones de escritura sobre productos y todas las operaciones de pedidos exigen un token <b>Bearer</b>. Obtén el token con <code>POST /api/auth</code> y envíalo en cada petición:</p>
+        <div class="codigo">Authorization: Bearer 3f9c2a...e81b</div>
+        <p>El token no expira mientras el servidor esté encendido. Cada inicio de sesión genera un token nuevo; los anteriores siguen siendo válidos.</p>
+      </section>
+
+      <section id="errores">
+        <h2>Errores y códigos de estado</h2>
+        <p>Toda respuesta de error tiene el mismo formato:</p>
+        <div class="codigo">{ <span class="s">"error"</span>: <span class="s">"Producto no encontrado"</span> }</div>
+        <table class="tabla-doc">
+          <tr><th>Código</th><th>Significado</th></tr>
+          <tr><td><code>200</code></td><td>Operación correcta.</td></tr>
+          <tr><td><code>201</code></td><td>Recurso creado. Incluye la cabecera <code>Location</code>.</td></tr>
+          <tr><td><code>204</code></td><td>Operación correcta sin cuerpo de respuesta.</td></tr>
+          <tr><td><code>400</code></td><td>Datos inválidos, JSON mal formado o regla de negocio incumplida.</td></tr>
+          <tr><td><code>401</code></td><td>Credenciales incorrectas, o token ausente o inválido.</td></tr>
+          <tr><td><code>404</code></td><td>El recurso no existe o no pertenece al usuario.</td></tr>
+          <tr><td><code>405</code></td><td>Método no permitido en la ruta (ver cabecera <code>Allow</code>).</td></tr>
+          <tr><td><code>423</code></td><td>Usuario bloqueado.</td></tr>
+          <tr><td><code>500</code></td><td>Error no controlado del servidor. No debería ocurrir nunca.</td></tr>
+        </table>
+      </section>
+
+      <section id="usuarios">
+        <h2>Usuarios de prueba</h2>
+        <p>Todos usan la clave <code>canvia123</code>.</p>
+        <table class="tabla-doc">
+          <tr><th>Usuario</th><th>Comportamiento</th></tr>
+          <tr><td><code>ana</code></td><td>Cliente habitual. Úsalo para los flujos principales.</td></tr>
+          <tr><td><code>bloqueado</code></td><td>Cuenta bloqueada: <code>POST /api/auth</code> responde <code>423</code>.</td></tr>
+          <tr><td><code>lento</code></td><td>Simula una red lenta: cada respuesta tarda unos 1,5 segundos.</td></tr>
+          <tr><td><code>errores</code></td><td>Cliente que usa una versión anterior de la tienda web.</td></tr>
+        </table>
+      </section>
+
+      <section id="salud">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-get">GET</span><span class="ruta">/api/salud</span><span class="candado">Público</span></div>
+          <p>Indica si el servicio está disponible. Úsalo para esperar a que el portal levante.</p>
+          <div class="codigo-titulo">Ejemplo</div>
+          <div class="codigo">curl http://localhost:3000/api/salud
+
+{ <span class="s">"estado"</span>: <span class="s">"ok"</span>, <span class="s">"servicio"</span>: <span class="s">"Portal Canvia Market"</span>, <span class="s">"version"</span>: <span class="s">"1.0.0"</span> }</div>
+          <div class="codigos"><span class="ok"><b>200</b> disponible</span></div>
+        </article>
+      </section>
+
+      <section id="reset">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-post">POST</span><span class="ruta">/api/reset</span><span class="candado">Público</span></div>
+          <p>Restaura el catálogo inicial (12 productos, ids 1 a 12) y elimina todos los pedidos. Los tokens emitidos siguen siendo válidos. Los ids nuevos vuelven a empezar en 13 (productos) y 1001 (pedidos).</p>
+          <div class="codigo">curl -X POST http://localhost:3000/api/reset
+
+{ <span class="s">"estado"</span>: <span class="s">"ok"</span>, <span class="s">"mensaje"</span>: <span class="s">"Datos iniciales restaurados"</span> }</div>
+          <div class="codigos"><span class="ok"><b>200</b> datos restaurados</span></div>
+        </article>
+      </section>
+
+      <section id="auth">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-post">POST</span><span class="ruta">/api/auth</span><span class="candado">Público</span></div>
+          <p>Inicia sesión y devuelve el token para las siguientes peticiones.</p>
+          <table class="tabla-doc">
+            <tr><th>Campo</th><th>Tipo</th><th>Regla</th></tr>
+            <tr><td><code>usuario</code></td><td>texto</td><td>Obligatorio. No distingue mayúsculas.</td></tr>
+            <tr><td><code>clave</code></td><td>texto</td><td>Obligatorio.</td></tr>
+          </table>
+          <div class="codigo-titulo">Ejemplo</div>
+          <div class="codigo">curl -X POST http://localhost:3000/api/auth \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"usuario":"ana","clave":"canvia123"}'</span>
+
+{
+  <span class="s">"token"</span>: <span class="s">"9b1f0c4e7a...d2"</span>,
+  <span class="s">"tipo"</span>: <span class="s">"Bearer"</span>,
+  <span class="s">"usuario"</span>: <span class="s">"ana"</span>,
+  <span class="s">"nombre"</span>: <span class="s">"Ana Torres"</span>,
+  <span class="s">"interfaz"</span>: <span class="s">"2.4"</span>
+}</div>
+          <div class="codigos">
+            <span class="ok"><b>200</b> token emitido</span>
+            <span class="ko"><b>400</b> faltan usuario o clave</span>
+            <span class="ko"><b>401</b> usuario o clave incorrectos</span>
+            <span class="ko"><b>423</b> usuario bloqueado</span>
+          </div>
+        </article>
+      </section>
+
+      <section id="productos-listar">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-get">GET</span><span class="ruta">/api/productos</span><span class="candado">Público</span></div>
+          <p>Lista los productos activos. Ambos filtros son opcionales y se pueden combinar.</p>
+          <table class="tabla-doc">
+            <tr><th>Parámetro</th><th>Descripción</th></tr>
+            <tr><td><code>buscar</code></td><td>Texto contenido en el nombre. No distingue mayúsculas ni tildes.</td></tr>
+            <tr><td><code>categoria</code></td><td>Nombre exacto de la categoría (sin distinguir mayúsculas ni tildes).</td></tr>
+          </table>
+          <div class="codigo-titulo">Ejemplo</div>
+          <div class="codigo">curl <span class="s">"http://localhost:3000/api/productos?buscar=teclado&amp;categoria=Accesorios"</span>
+
+[
+  {
+    <span class="s">"id"</span>: 7,
+    <span class="s">"nombre"</span>: <span class="s">"Teclado numérico USB"</span>,
+    <span class="s">"descripcion"</span>: <span class="s">"Teclado numérico compacto para hojas de cálculo."</span>,
+    <span class="s">"precio"</span>: 69.9,
+    <span class="s">"categoria"</span>: <span class="s">"Accesorios"</span>,
+    <span class="s">"stock"</span>: 60
+  }
+]</div>
+          <div class="codigos"><span class="ok"><b>200</b> lista (puede ser vacía)</span></div>
+        </article>
+      </section>
+
+      <section id="productos-obtener">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-get">GET</span><span class="ruta">/api/productos/:id</span><span class="candado">Público</span></div>
+          <p>Devuelve un producto por su id.</p>
+          <div class="codigo">curl http://localhost:3000/api/productos/3</div>
+          <div class="codigos"><span class="ok"><b>200</b> producto</span><span class="ko"><b>404</b> no existe</span></div>
+        </article>
+      </section>
+
+      <section id="productos-crear">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-post">POST</span><span class="ruta">/api/productos</span><span class="candado">Requiere token</span></div>
+          <p>Crea un producto. Devuelve el producto creado con su <code>id</code> y la cabecera <code>Location</code>.</p>
+          <table class="tabla-doc">
+            <tr><th>Campo</th><th>Tipo</th><th>Regla</th></tr>
+            <tr><td><code>nombre</code></td><td>texto</td><td>Obligatorio, de 1 a 80 caracteres.</td></tr>
+            <tr><td><code>precio</code></td><td>número</td><td>Obligatorio, mayor a 0. Se redondea a 2 decimales.</td></tr>
+            <tr><td><code>categoria</code></td><td>texto</td><td>Obligatorio. Una de: Tecnología, Accesorios, Oficina, Hogar.</td></tr>
+            <tr><td><code>stock</code></td><td>entero</td><td>Opcional, mayor o igual a 0. Por defecto 0.</td></tr>
+            <tr><td><code>descripcion</code></td><td>texto</td><td>Opcional.</td></tr>
+          </table>
+          <div class="codigo-titulo">Ejemplo</div>
+          <div class="codigo">curl -X POST http://localhost:3000/api/productos \
+  -H <span class="s">"Authorization: Bearer $TOKEN"</span> \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"nombre":"Webcam Full HD","precio":219.9,"categoria":"Accesorios","stock":30}'</span>
+
+{ <span class="s">"id"</span>: 13, <span class="s">"nombre"</span>: <span class="s">"Webcam Full HD"</span>, <span class="s">"descripcion"</span>: <span class="s">""</span>, <span class="s">"precio"</span>: 219.9, <span class="s">"categoria"</span>: <span class="s">"Accesorios"</span>, <span class="s">"stock"</span>: 30 }</div>
+          <div class="codigos">
+            <span class="ok"><b>201</b> creado</span>
+            <span class="ko"><b>400</b> validación</span>
+            <span class="ko"><b>401</b> sin token</span>
+          </div>
+        </article>
+      </section>
+
+      <section id="productos-reemplazar">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-put">PUT</span><span class="ruta">/api/productos/:id</span><span class="candado">Requiere token</span></div>
+          <p>Reemplaza todos los datos del producto. Exige el mismo cuerpo y las mismas reglas que la creación.</p>
+          <div class="codigo">curl -X PUT http://localhost:3000/api/productos/13 \
+  -H <span class="s">"Authorization: Bearer $TOKEN"</span> -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"nombre":"Webcam 4K","precio":399,"categoria":"Accesorios","stock":10}'</span></div>
+          <div class="codigos">
+            <span class="ok"><b>200</b> producto actualizado</span>
+            <span class="ko"><b>400</b> validación</span>
+            <span class="ko"><b>401</b> sin token</span>
+            <span class="ko"><b>404</b> no existe</span>
+          </div>
+        </article>
+      </section>
+
+      <section id="productos-modificar">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-patch">PATCH</span><span class="ruta">/api/productos/:id</span><span class="candado">Requiere token</span></div>
+          <p>Modifica solo los campos enviados. Cada campo enviado sigue las reglas de la creación. Un cuerpo vacío responde <code>400</code>.</p>
+          <div class="codigo">curl -X PATCH http://localhost:3000/api/productos/13 \
+  -H <span class="s">"Authorization: Bearer $TOKEN"</span> -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"precio":199.9}'</span></div>
+          <div class="codigos">
+            <span class="ok"><b>200</b> producto actualizado</span>
+            <span class="ko"><b>400</b> validación</span>
+            <span class="ko"><b>401</b> sin token</span>
+            <span class="ko"><b>404</b> no existe</span>
+          </div>
+        </article>
+      </section>
+
+      <section id="productos-eliminar">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-delete">DELETE</span><span class="ruta">/api/productos/:id</span><span class="candado">Requiere token</span></div>
+          <p>Elimina el producto del catálogo. Después de eliminarlo, <code>GET /api/productos/:id</code> responde <code>404</code> y el producto deja de aparecer en el listado.</p>
+          <div class="codigo">curl -X DELETE http://localhost:3000/api/productos/13 -H <span class="s">"Authorization: Bearer $TOKEN"</span></div>
+          <div class="codigos">
+            <span class="ok"><b>204</b> eliminado</span>
+            <span class="ko"><b>401</b> sin token</span>
+            <span class="ko"><b>404</b> no existe</span>
+          </div>
+        </article>
+      </section>
+
+      <section id="categorias">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-get">GET</span><span class="ruta">/api/categorias</span><span class="candado">Público</span></div>
+          <p>Lista de categorías válidas.</p>
+          <div class="codigo">curl http://localhost:3000/api/categorias
+
+[<span class="s">"Tecnología"</span>, <span class="s">"Accesorios"</span>, <span class="s">"Oficina"</span>, <span class="s">"Hogar"</span>]</div>
+          <div class="codigos"><span class="ok"><b>200</b> lista</span></div>
+        </article>
+      </section>
+
+      <section id="pedidos-listar">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-get">GET</span><span class="ruta">/api/pedidos</span><span class="candado">Requiere token</span></div>
+          <p>Lista los pedidos del usuario autenticado, incluidos los cancelados. Nunca devuelve pedidos de otros usuarios.</p>
+          <div class="codigo">curl http://localhost:3000/api/pedidos -H <span class="s">"Authorization: Bearer $TOKEN"</span></div>
+          <div class="codigos"><span class="ok"><b>200</b> lista</span><span class="ko"><b>401</b> sin token</span></div>
+        </article>
+      </section>
+
+      <section id="pedidos-crear">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-post">POST</span><span class="ruta">/api/pedidos</span><span class="candado">Requiere token</span></div>
+          <p>Registra un pedido del usuario autenticado. El pedido nace en estado <code>pendiente</code>. El stock no se descuenta.</p>
+          <table class="tabla-doc">
+            <tr><th>Campo</th><th>Tipo</th><th>Regla</th></tr>
+            <tr><td><code>items</code></td><td>lista</td><td>Obligatorio, al menos un ítem.</td></tr>
+            <tr><td><code>items[].productoId</code></td><td>entero</td><td>Id de un producto existente.</td></tr>
+            <tr><td><code>items[].cantidad</code></td><td>entero</td><td>Mayor o igual a 1 y no mayor al stock del producto.</td></tr>
+            <tr><td><code>envio</code></td><td>objeto</td><td>Opcional: <code>{ "nombre", "direccion" }</code>. Lo envía la tienda web.</td></tr>
+          </table>
+          <div class="codigo-titulo">Ejemplo</div>
+          <div class="codigo">curl -X POST http://localhost:3000/api/pedidos \
+  -H <span class="s">"Authorization: Bearer $TOKEN"</span> -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"items":[{"productoId":4,"cantidad":2},{"productoId":10,"cantidad":1}]}'</span>
+
+{
+  <span class="s">"id"</span>: 1001,
+  <span class="s">"usuario"</span>: <span class="s">"ana"</span>,
+  <span class="s">"items"</span>: [
+    { <span class="s">"productoId"</span>: 4, <span class="s">"nombre"</span>: <span class="s">"Mouse ergonómico vertical"</span>, <span class="s">"precioUnitario"</span>: 129.9, <span class="s">"cantidad"</span>: 2, <span class="s">"subtotal"</span>: 259.8 },
+    { <span class="s">"productoId"</span>: 10, <span class="s">"nombre"</span>: <span class="s">"Lámpara LED de escritorio"</span>, <span class="s">"precioUnitario"</span>: 89.9, <span class="s">"cantidad"</span>: 1, <span class="s">"subtotal"</span>: 89.9 }
+  ],
+  <span class="s">"subtotal"</span>: 349.7,
+  <span class="s">"descuento"</span>: 0,
+  <span class="s">"total"</span>: 349.7,
+  <span class="s">"estado"</span>: <span class="s">"pendiente"</span>,
+  <span class="s">"envio"</span>: null,
+  <span class="s">"fecha"</span>: <span class="s">"2026-10-30T15:04:05.000Z"</span>
+}</div>
+          <div class="codigos">
+            <span class="ok"><b>201</b> creado</span>
+            <span class="ko"><b>400</b> validación o stock insuficiente</span>
+            <span class="ko"><b>401</b> sin token</span>
+          </div>
+        </article>
+      </section>
+
+      <section id="pedidos-obtener">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-get">GET</span><span class="ruta">/api/pedidos/:id</span><span class="candado">Requiere token</span></div>
+          <p>Devuelve un pedido del usuario autenticado. Si el pedido no existe o pertenece a otro usuario, responde <code>404</code>.</p>
+          <div class="codigo">curl http://localhost:3000/api/pedidos/1001 -H <span class="s">"Authorization: Bearer $TOKEN"</span></div>
+          <div class="codigos"><span class="ok"><b>200</b> pedido</span><span class="ko"><b>401</b> sin token</span><span class="ko"><b>404</b> no existe o es ajeno</span></div>
+        </article>
+      </section>
+
+      <section id="pedidos-estado">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-patch">PATCH</span><span class="ruta">/api/pedidos/:id</span><span class="candado">Requiere token</span></div>
+          <p>Avanza el estado del pedido. Solo se permite avanzar un paso: <code>pendiente</code> → <code>pagado</code> → <code>enviado</code>. Cualquier otra transición (retroceder, saltar un paso o cambiar un pedido enviado o cancelado) responde <code>400</code>.</p>
+          <div class="codigo">curl -X PATCH http://localhost:3000/api/pedidos/1001 \
+  -H <span class="s">"Authorization: Bearer $TOKEN"</span> -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"estado":"pagado"}'</span></div>
+          <div class="codigos">
+            <span class="ok"><b>200</b> pedido actualizado</span>
+            <span class="ko"><b>400</b> estado o transición inválida</span>
+            <span class="ko"><b>401</b> sin token</span>
+            <span class="ko"><b>404</b> no existe o es ajeno</span>
+          </div>
+        </article>
+      </section>
+
+      <section id="pedidos-cancelar">
+        <article class="panel endpoint">
+          <div class="endpoint-cab"><span class="metodo m-delete">DELETE</span><span class="ruta">/api/pedidos/:id</span><span class="candado">Requiere token</span></div>
+          <p>Cancela el pedido: su estado pasa a <code>cancelado</code> y sigue apareciendo en el historial. Un pedido <code>enviado</code> no se puede cancelar.</p>
+          <div class="codigo">curl -X DELETE http://localhost:3000/api/pedidos/1001 -H <span class="s">"Authorization: Bearer $TOKEN"</span></div>
+          <div class="codigos">
+            <span class="ok"><b>204</b> cancelado</span>
+            <span class="ko"><b>400</b> pedido ya enviado</span>
+            <span class="ko"><b>401</b> sin token</span>
+            <span class="ko"><b>404</b> no existe o es ajeno</span>
+          </div>
+        </article>
+      </section>
+
+      <section id="modelos">
+        <h2>Modelos de datos</h2>
+        <h3>Producto</h3>
+        <table class="tabla-doc">
+          <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+          <tr><td><code>id</code></td><td>entero</td><td>Identificador asignado por el servidor.</td></tr>
+          <tr><td><code>nombre</code></td><td>texto</td><td>Nombre comercial.</td></tr>
+          <tr><td><code>descripcion</code></td><td>texto</td><td>Descripción corta (puede ser vacía).</td></tr>
+          <tr><td><code>precio</code></td><td>número</td><td>Precio unitario en soles, mayor a 0.</td></tr>
+          <tr><td><code>categoria</code></td><td>texto</td><td>Tecnología, Accesorios, Oficina u Hogar.</td></tr>
+          <tr><td><code>stock</code></td><td>entero</td><td>Unidades disponibles, mayor o igual a 0.</td></tr>
+        </table>
+        <h3>Pedido</h3>
+        <table class="tabla-doc">
+          <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+          <tr><td><code>id</code></td><td>entero</td><td>Número de pedido (desde 1001).</td></tr>
+          <tr><td><code>usuario</code></td><td>texto</td><td>Dueño del pedido.</td></tr>
+          <tr><td><code>items</code></td><td>lista</td><td><code>productoId</code>, <code>nombre</code>, <code>precioUnitario</code>, <code>cantidad</code>, <code>subtotal</code> (precio por cantidad).</td></tr>
+          <tr><td><code>subtotal</code></td><td>número</td><td>Suma de los subtotales de los ítems.</td></tr>
+          <tr><td><code>descuento</code></td><td>número</td><td>Descuento mayorista aplicado (ver reglas).</td></tr>
+          <tr><td><code>total</code></td><td>número</td><td><code>subtotal - descuento</code>.</td></tr>
+          <tr><td><code>estado</code></td><td>texto</td><td><code>pendiente</code>, <code>pagado</code>, <code>enviado</code> o <code>cancelado</code>.</td></tr>
+          <tr><td><code>envio</code></td><td>objeto o null</td><td>Datos de entrega enviados por la tienda web.</td></tr>
+          <tr><td><code>fecha</code></td><td>texto</td><td>Fecha de creación en ISO 8601.</td></tr>
+        </table>
+      </section>
+
+      <section id="reglas">
+        <h2>Reglas de negocio</h2>
+        <ul>
+          <li><b>Precio:</b> todo producto debe tener precio mayor a 0, tanto al crearlo como al modificarlo.</li>
+          <li><b>Cantidad:</b> cada ítem de un pedido debe tener al menos 1 unidad y no superar el stock del producto.</li>
+          <li><b>Descuento mayorista:</b> cada ítem con 5 unidades o más tiene un 10 % de descuento sobre el subtotal de <b>ese ítem</b>. Los demás ítems del pedido se cobran a precio normal. Los importes se redondean a 2 decimales.</li>
+          <li><b>Estados:</b> <code>pendiente</code> → <code>pagado</code> → <code>enviado</code>, de a un paso. <code>DELETE</code> cancela pedidos pendientes o pagados.</li>
+          <li><b>Privacidad:</b> un usuario solo puede ver, modificar o cancelar sus propios pedidos.</li>
+        </ul>
+        <div class="caja caja-azul"><b>Ejemplo de descuento mayorista.</b> 6 lámparas (S/ 89.90) y 1 cafetera (S/ 259.00): subtotal S/ 798.40; descuento 10 % de S/ 539.40 = S/ 53.94; total S/ 744.46.</div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer class="pie">
+  <div class="pie-interior">
+    <span>Canvia Market · Portal de práctica para la capacitación QA de Canvia</span>
+    <span><a href="/docs">Documentación de la API</a><a href="/examen">Examen</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

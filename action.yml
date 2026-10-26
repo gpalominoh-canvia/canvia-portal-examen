@@ -1,0 +1,34 @@
+name: Portal Canvia Market
+description: Levanta el Portal Canvia Market (API y tienda web) en segundo plano y espera a que responda /api/salud.
+author: Canvia
+
+branding:
+  icon: shopping-cart
+  color: blue
+
+inputs:
+  puerto:
+    description: Puerto en el que escucha el portal.
+    required: false
+    default: "3000"
+  espera:
+    description: Segundos máximos de espera hasta que /api/salud responda.
+    required: false
+    default: "30"
+
+outputs:
+  url:
+    description: URL base del portal, por ejemplo http://localhost:3000
+    value: ${{ steps.iniciar.outputs.url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Iniciar Portal Canvia Market
+      id: iniciar
+      shell: bash
+      env:
+        PORTAL_PUERTO: ${{ inputs.puerto }}
+        PORTAL_ESPERA: ${{ inputs.espera }}
+        PORTAL_DIR: ${{ github.action_path }}
+      run: bash "$PORTAL_DIR/scripts/iniciar-portal.sh"

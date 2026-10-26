@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Examen final · Canvia Market</title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+<header class="barra">
+  <div class="barra-interior">
+    <a class="marca" href="/" aria-label="Canvia Market, inicio">
+      <img src="/img/logo-canvia-blanco.svg" alt="Canvia">
+      <span>Market</span>
+    </a>
+    <nav class="menu" aria-label="Principal">
+      <a href="/catalogo" data-pagina="catalogo">Tienda</a>
+      <a href="/docs" data-pagina="docs">Documentación de la API</a>
+      <a href="/examen" data-pagina="examen" class="activo">Examen</a>
+    </nav>
+    <div class="usuario">
+      <a class="boton-salir" href="/" style="text-decoration:none">Ingresar</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="encabezado">
+    <div>
+      <span class="rotulo">Capacitación QA Canvia · Examen final · viernes 30 de octubre de 2026</span>
+      <h1>Enunciados del examen final</h1>
+      <p>Lee el enunciado completo antes de escribir la primera línea. Aprobación: 70 % en cada examen.</p>
+    </div>
+  </div>
+
+  <div class="pestanas" role="tablist">
+    <button class="pestana" role="tab" id="tab-api" aria-controls="examen-api" aria-selected="true" data-test="tab-api">Examen de API · REST Assured + Cucumber</button>
+    <button class="pestana" role="tab" id="tab-web" aria-controls="examen-web" aria-selected="false" data-test="tab-web">Examen web · Playwright + Screenplay + Cucumber</button>
+  </div>
+
+  <!-- ============================ EXAMEN API ============================ -->
+  <section id="examen-api" role="tabpanel" aria-labelledby="tab-api" class="contenido">
+    <div class="datos-examen">
+      <div class="panel dato"><small>Duración</small><strong>60 minutos</strong></div>
+      <div class="panel dato"><small>Repositorio</small><strong>canvia-restassured-bdd</strong></div>
+      <div class="panel dato"><small>Rama</small><strong>feature/examen-&lt;tu-nombre&gt;</strong></div>
+      <div class="panel dato"><small>Aprobación</small><strong>70 %</strong></div>
+    </div>
+
+    <h2>Contexto</h2>
+    <p>Canvia Market va a salir a producción y el equipo de desarrollo entregó la API de catálogo y pedidos. Eres el QA del equipo: debes construir la suite de regresión de la API con <b>REST Assured + Cucumber</b> (Java 17), dejarla corriendo en la CI y reportar los defectos que encuentres. La API tiene defectos reales: tu trabajo no es que todo pase, sino que tus pruebas <b>demuestren</b> qué funciona y qué no.</p>
+    <p>La referencia de la API está en <a href="/docs">/docs</a>. Esa documentación es el <b>comportamiento esperado</b>: si la API hace algo distinto, es un defecto.</p>
+
+    <h2>Preparación (5 minutos)</h2>
+    <ol>
+      <li>Actualiza <code>develop</code> y crea tu rama <code>feature/examen-&lt;tu-nombre&gt;</code> (minúsculas, sin tildes, por ejemplo <code>feature/examen-rosa-quispe</code>).</li>
+      <li>Levanta el portal en tu PC: <code>docker compose up -d</code> en el repo del portal, o <code>node server.js</code>. Comprueba <code>http://localhost:3000/api/salud</code>.</li>
+      <li>La URL base se pasa con <code>-DbaseUrl=http://localhost:3000</code>; nunca la escribas en un <code>.feature</code>.</li>
+      <li>Puedes restaurar los datos con <code>POST /api/reset</code> (por ejemplo, en un hook <code>@Before</code>), pero cada escenario debe crear los datos que necesita.</li>
+    </ol>
+
+    <h2>Tareas</h2>
+    <ol class="tareas">
+      <li class="panel">
+        <h3>Autenticación <span class="minimo">mínimo 3 escenarios</span></h3>
+        <p>Inicio de sesión correcto con <code>ana</code> (código 200 y token no vacío). Con un <b>Esquema del escenario</b>: clave incorrecta (401), usuario <code>bloqueado</code> (423) y petición sin clave (400). Valida el código <b>y</b> el mensaje del campo <code>error</code>.</p>
+      </li>
+      <li class="panel">
+        <h3>Consulta del catálogo <span class="minimo">mínimo 2 escenarios</span></h3>
+        <ul>
+          <li>Buscar por texto (por ejemplo <code>teclado</code>): la lista no está vacía y <b>todos</b> los nombres contienen el texto.</li>
+          <li>Filtrar por categoría: todos los productos devueltos son de esa categoría.</li>
+          <li>Consultar un producto que no existe responde 404.</li>
+        </ul>
+      </li>
+      <li class="panel">
+        <h3>CRUD de productos <span class="minimo">mínimo 4 escenarios</span></h3>
+        <ul>
+          <li>Crear un producto (201) y comprobar que al consultarlo por su id devuelve los mismos datos.</li>
+          <li>Modificar un producto con <code>PATCH</code> o <code>PUT</code> y comprobar el cambio con una consulta posterior.</li>
+          <li>Eliminar un producto (204) y comprobar que después ya no existe (404) ni aparece en el listado.</li>
+          <li>Intentar crear un producto sin token responde 401.</li>
+        </ul>
+      </li>
+      <li class="panel">
+        <h3>Validaciones de producto <span class="minimo">Esquema con 4 filas o más</span></h3>
+        <p>Crear un producto con datos inválidos responde 400 con un mensaje claro: sin nombre, precio 0, precio negativo, categoría inexistente, stock negativo.</p>
+      </li>
+      <li class="panel">
+        <h3>Pedidos <span class="minimo">mínimo 4 escenarios</span></h3>
+        <ul>
+          <li>Crear un pedido con varios ítems: 201, estado <code>pendiente</code> y <code>total</code> igual a la suma de precio por cantidad.</li>
+          <li>Regla de descuento mayorista (ver <a href="/docs#reglas">reglas de negocio</a>): pedido con un ítem de 5 unidades o más <b>y</b> otro ítem normal.</li>
+          <li>Un ítem con cantidad 0 responde 400.</li>
+          <li>Flujo de estados <code>pendiente</code> → <code>pagado</code> → <code>enviado</code>, y una transición inválida (por ejemplo, de <code>enviado</code> a <code>pagado</code>) responde 400.</li>
+          <li>Un usuario no puede ver el pedido de otro usuario (404). Usa dos usuarios distintos, por ejemplo <code>ana</code> y <code>errores</code>.</li>
+        </ul>
+      </li>
+      <li class="panel">
+        <h3>Validación de esquema JSON <span class="minimo">mínimo 2 esquemas</span></h3>
+        <p>Valida la respuesta de producto y la de pedido contra un JSON Schema en <code>src/test/resources/schemas/</code> con <code>matchesJsonSchemaInClasspath</code> (dependencia <code>io.rest-assured:json-schema-validator</code>).</p>
+      </li>
+      <li class="panel">
+        <h3>Pipeline y reporte</h3>
+        <p>El workflow de GitHub Actions levanta el portal con la action oficial, ejecuta la suite excluyendo los escenarios <code>@bug</code> y publica el reporte de Cucumber (artefacto y GitHub Pages). El pipeline debe quedar en verde.</p>
+        <div class="codigo">      - name: Levantar Portal Canvia Market
+        id: portal
+        uses: gpalominoh-canvia/canvia-portal-examen@main
+
+      - name: Ejecutar escenarios
+        run: mvn -B test -DbaseUrl=${{ steps.portal.outputs.url }} <span class="s">"-Dcucumber.filter.tags=not @bug"</span></div>
+      </li>
+      <li class="panel">
+        <h3>Defectos en <code>BUGS.md</code></h3>
+        <p>Cada escenario que falla por un defecto de la API se etiqueta <code>@bug</code> (queda fuera de la CI) y se documenta en <code>BUGS.md</code> en la raíz del repo: título, severidad, pasos para reproducir, resultado esperado, resultado obtenido y escenario que lo detecta.</p>
+      </li>
+    </ol>
+
+    <div class="caja"><b>Mínimo para aprobar:</b> 8 escenarios ejecutados que cubran las tareas 1, 3, 5 y 7 (cada fila de un Esquema cuenta; las demás tareas suman puntos), al menos 2 <code>Esquema del escenario</code>, etiquetas <code>@smoke</code> en los escenarios críticos y <code>@regresion</code> en el resto, Gherkin sin URLs ni JSON, y cada escenario independiente de los demás.</div>
+
+    <h2>Entregables</h2>
+    <table class="tabla-doc">
+      <tr><th>Entregable</th><th>Detalle</th></tr>
+      <tr><td>Rama</td><td><code>feature/examen-&lt;tu-nombre&gt;</code> con commits en español (<code>test:</code>, <code>ci:</code>, <code>docs:</code>).</td></tr>
+      <tr><td>Pull Request</td><td>Hacia <code>develop</code>, titulado <code>Examen final API - &lt;tu nombre&gt;</code>, abierto antes de que termine el tiempo.</td></tr>
+      <tr><td>CI en verde</td><td>El check del workflow en verde sobre el último commit del PR.</td></tr>
+      <tr><td>Reporte publicado</td><td>Reporte de Cucumber como artefacto y en GitHub Pages; pega el enlace en la descripción del PR.</td></tr>
+      <tr><td><code>BUGS.md</code></td><td>Defectos encontrados con el formato indicado en la tarea 8.</td></tr>
+    </table>
+
+    <h2>Rúbrica</h2>
+    <table class="tabla-doc">
+      <tr><th>Criterio</th><th>Peso</th></tr>
+      <tr><td>Escenarios en Gherkin claros, en español y declarativos</td><td class="peso">20 %</td></tr>
+      <tr><td>Autenticación, CRUD y casos negativos funcionando</td><td class="peso">30 %</td></tr>
+      <tr><td>Validaciones correctas (código, cuerpo y esquema)</td><td class="peso">20 %</td></tr>
+      <tr><td>Pipeline en verde con el reporte publicado</td><td class="peso">20 %</td></tr>
+      <tr><td>Bugs encontrados y documentados</td><td class="peso">10 %</td></tr>
+    </table>
+    <p>Aprobación: 70 %. Lo que no está en el PR al cierre del tiempo no se califica.</p>
+  </section>
+
+  <!-- ============================ EXAMEN WEB ============================ -->
+  <section id="examen-web" role="tabpanel" aria-labelledby="tab-web" class="contenido oculto">
+    <div class="datos-examen">
+      <div class="panel dato"><small>Duración</small><strong>45 minutos</strong></div>
+      <div class="panel dato"><small>Repositorio</small><strong>canvia-playwright-bdd</strong></div>
+      <div class="panel dato"><small>Rama</small><strong>feature/examen-&lt;tu-nombre&gt;</strong></div>
+      <div class="panel dato"><small>Aprobación</small><strong>70 %</strong></div>
+    </div>
+
+    <h2>Contexto</h2>
+    <p>La tienda web de Canvia Market necesita su suite de regresión de interfaz antes del lanzamiento. Debes automatizar los flujos principales con <b>Playwright + Screenplay + Cucumber</b> (TypeScript), dejarlos corriendo en la CI y reportar los defectos que encuentres. La tienda tiene defectos reales: tus preguntas (<i>Questions</i>) deben verificar el resultado de verdad, no solo que la página cargó.</p>
+    <p>Comportamiento esperado: los precios se muestran como <code>S/ 1,299.90</code>; el contador del carrito muestra el total de unidades en el carrito; el total del carrito es la suma de precio por cantidad de todos los productos; el nombre y la dirección de entrega son obligatorios.</p>
+
+    <h2>Preparación (5 minutos)</h2>
+    <ol>
+      <li>Actualiza <code>develop</code> y crea tu rama <code>feature/examen-&lt;tu-nombre&gt;</code>.</li>
+      <li>Levanta el portal (<code>docker compose up -d</code> o <code>node server.js</code>) y abre <code>http://localhost:3000</code>.</li>
+      <li>La URL base se lee de la variable <code>BASE_URL</code> (por defecto <code>http://localhost:3000</code>); nunca va en un <code>.feature</code>.</li>
+    </ol>
+
+    <h3>Selectores disponibles (<code>data-test</code>)</h3>
+    <table class="tabla-doc">
+      <tr><th>Página</th><th>Selectores</th></tr>
+      <tr><td><code>/</code> login</td><td><code>usuario</code>, <code>clave</code>, <code>ingresar</code>, <code>error</code></td></tr>
+      <tr><td>Cabecera</td><td><code>contador-carrito</code>, <code>cerrar-sesion</code>, <code>ir-al-carrito</code>, <code>ir-a-pedidos</code>, <code>nombre-usuario</code></td></tr>
+      <tr><td><code>/catalogo</code></td><td><code>buscar</code>, <code>categoria</code>, <code>ordenar</code>, <code>producto</code>, <code>nombre-producto</code>, <code>precio-producto</code>, <code>agregar-&lt;id&gt;</code>, <code>resultados</code>, <code>sin-resultados</code></td></tr>
+      <tr><td><code>/carrito</code></td><td><code>item-carrito</code>, <code>nombre-producto</code>, <code>cantidad</code>, <code>quitar-&lt;id&gt;</code>, <code>total</code>, <code>ir-a-pagar</code>, <code>carrito-vacio</code></td></tr>
+      <tr><td><code>/checkout</code></td><td><code>nombre</code>, <code>direccion</code>, <code>confirmar</code>, <code>error</code>, <code>pedido-confirmado</code>, <code>numero-pedido</code></td></tr>
+      <tr><td><code>/pedidos</code></td><td><code>pedido</code>, <code>numero</code>, <code>total-pedido</code>, <code>estado-pedido</code>, <code>sin-pedidos</code></td></tr>
+    </table>
+    <p>Valores de <code>ordenar</code>: <code>nombre-asc</code>, <code>nombre-desc</code>, <code>precio-asc</code>, <code>precio-desc</code>. Los ids de producto van del 1 al 12 (por ejemplo, <code>agregar-4</code> es el mouse ergonómico).</p>
+
+    <h2>Tareas</h2>
+    <ol class="tareas">
+      <li class="panel">
+        <h3>Inicio de sesión <span class="minimo">mínimo 3 escenarios</span></h3>
+        <p>Ingreso correcto con <code>ana</code> (se ve el catálogo). Con un <b>Esquema del escenario</b>: usuario <code>bloqueado</code> y clave incorrecta muestran el mensaje de error esperado. Incluye el usuario <code>lento</code> en un escenario de ingreso correcto: debe pasar <b>sin esperas fijas</b>.</p>
+      </li>
+      <li class="panel">
+        <h3>Búsqueda y orden <span class="minimo">mínimo 2 escenarios</span></h3>
+        <ul>
+          <li>Buscar un texto (por ejemplo <code>teclado</code>): todos los productos visibles contienen el texto en su nombre.</li>
+          <li>Ordenar por precio de menor a mayor: los precios visibles quedan en orden ascendente. Convierte el texto <code>S/ 1,299.90</code> a número en tu <i>Question</i>.</li>
+        </ul>
+      </li>
+      <li class="panel">
+        <h3>Carrito <span class="minimo">mínimo 2 escenarios</span></h3>
+        <ul>
+          <li>Agregar dos productos distintos: el contador muestra 2, el carrito lista esos dos productos y el total es la suma de sus precios.</li>
+          <li>Quitar un producto del carrito: el contador y el total se actualizan.</li>
+        </ul>
+      </li>
+      <li class="panel">
+        <h3>Compra <span class="minimo">mínimo 2 escenarios</span></h3>
+        <ul>
+          <li>Compra completa: carrito → pago → pedido confirmado con número; el pedido aparece en <b>Mis pedidos</b> como <code>pendiente</code>.</li>
+          <li>Intentar confirmar sin nombre o sin dirección: se muestra un error y no se confirma el pedido.</li>
+        </ul>
+      </li>
+      <li class="panel">
+        <h3>Usuario <code>errores</code> <span class="minimo">opcional, suma en bugs</span></h3>
+        <p>Repite tus escenarios de carrito y compra con el usuario <code>errores</code> usando un <b>Esquema del escenario</b> (<code>ana</code> y <code>errores</code>). Si el comportamiento difiere, documenta el defecto.</p>
+      </li>
+      <li class="panel">
+        <h3>Screenplay</h3>
+        <p>Un <code>Actor</code> con la habilidad de navegar la web; <b>tareas</b> de negocio (iniciar sesión, buscar, agregar al carrito, quitar, completar compra), <b>interacciones</b> reutilizables (abrir, escribir, hacer clic, seleccionar) y <b>preguntas</b> (contador, nombres y precios visibles, total, mensaje de error, número de pedido). Los steps solo llaman al actor: sin selectores ni lógica.</p>
+      </li>
+      <li class="panel">
+        <h3>Pipeline y reporte</h3>
+        <p>El workflow levanta el portal con la action oficial, instala Chromium, ejecuta <code>npm run typecheck</code> y los escenarios sin <code>@bug</code>, y publica el reporte (artefacto y GitHub Pages) con las capturas de los fallos.</p>
+        <div class="codigo">      - name: Levantar Portal Canvia Market
+        id: portal
+        uses: gpalominoh-canvia/canvia-portal-examen@main
+
+      - name: Ejecutar escenarios
+        run: npm test -- --tags <span class="s">"not @bug"</span>
+        env:
+          BASE_URL: ${{ steps.portal.outputs.url }}</div>
+      </li>
+      <li class="panel">
+        <h3>Defectos en <code>BUGS.md</code></h3>
+        <p>Cada escenario que falla por un defecto se etiqueta <code>@bug</code> y se documenta en <code>BUGS.md</code>: título, severidad, usuario, pasos, resultado esperado, resultado obtenido, escenario que lo detecta y captura si la tienes.</p>
+      </li>
+    </ol>
+
+    <div class="caja"><b>Mínimo para aprobar:</b> 6 escenarios ejecutados que cubran login, carrito, compra y pipeline (cada fila de un Esquema cuenta; las demás tareas suman puntos), al menos 1 <code>Esquema del escenario</code>, etiquetas <code>@smoke</code> y <code>@regresion</code>, selectores <code>data-test</code> o por rol, cero <code>waitForTimeout</code>, y <code>npm test</code> y <code>npm run typecheck</code> en verde.</div>
+
+    <h2>Entregables</h2>
+    <table class="tabla-doc">
+      <tr><th>Entregable</th><th>Detalle</th></tr>
+      <tr><td>Rama</td><td><code>feature/examen-&lt;tu-nombre&gt;</code> con commits en español.</td></tr>
+      <tr><td>Pull Request</td><td>Hacia <code>develop</code>, titulado <code>Examen final web - &lt;tu nombre&gt;</code>, abierto antes de que termine el tiempo.</td></tr>
+      <tr><td>CI en verde</td><td>Typecheck y escenarios en verde sobre el último commit del PR.</td></tr>
+      <tr><td>Reporte publicado</td><td>Reporte de Cucumber como artefacto y en GitHub Pages; enlace en la descripción del PR.</td></tr>
+      <tr><td><code>BUGS.md</code></td><td>Defectos encontrados con el formato de la tarea 8.</td></tr>
+    </table>
+
+    <h2>Rúbrica</h2>
+    <table class="tabla-doc">
+      <tr><th>Criterio</th><th>Peso</th></tr>
+      <tr><td>Escenarios en Gherkin claros, en español y declarativos</td><td class="peso">20 %</td></tr>
+      <tr><td>Screenplay bien aplicado (tareas, interacciones y preguntas separadas)</td><td class="peso">30 %</td></tr>
+      <tr><td>Flujos funcionando: login, búsqueda, carrito y compra</td><td class="peso">20 %</td></tr>
+      <tr><td>Pipeline en verde con el reporte publicado</td><td class="peso">20 %</td></tr>
+      <tr><td>Bugs encontrados y documentados</td><td class="peso">10 %</td></tr>
+    </table>
+    <p>Aprobación: 70 %. Lo que no está en el PR al cierre del tiempo no se califica.</p>
+  </section>
+</main>
+<script>
+  (() => {
+    const tabs = [...document.querySelectorAll('.pestana')];
+    function mostrar(id) {
+      tabs.forEach((t) => {
+        const activa = t.getAttribute('aria-controls') === id;
+        t.setAttribute('aria-selected', String(activa));
+        document.getElementById(t.getAttribute('aria-controls')).classList.toggle('oculto', !activa);
+      });
+    }
+    tabs.forEach((t) => t.addEventListener('click', () => {
+      const id = t.getAttribute('aria-controls');
+      history.replaceState(null, '', id === 'examen-web' ? '#web' : '#api');
+      mostrar(id);
+    }));
+    if (location.hash === '#web') mostrar('examen-web');
+  })();
+</script>
+
+<footer class="pie">
+  <div class="pie-interior">
+    <span>Canvia Market · Portal de práctica para la capacitación QA de Canvia</span>
+    <span><a href="/docs">Documentación de la API</a><a href="/examen">Examen</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

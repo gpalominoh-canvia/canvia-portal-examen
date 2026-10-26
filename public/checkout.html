@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pago · Canvia Market</title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+<header class="barra">
+  <div class="barra-interior">
+    <a class="marca" href="/catalogo" aria-label="Canvia Market, ir al catálogo">
+      <img src="/img/logo-canvia-blanco.svg" alt="Canvia">
+      <span>Market</span>
+    </a>
+    <nav class="menu" aria-label="Principal">
+      <a href="/catalogo" data-pagina="catalogo">Catálogo</a>
+      <a href="/pedidos" data-pagina="pedidos" data-test="ir-a-pedidos">Mis pedidos</a>
+      <a href="/docs" data-pagina="docs">API</a>
+    </nav>
+    <div class="usuario">
+      <a class="enlace-carrito" href="/carrito" data-test="ir-al-carrito" aria-label="Ver carrito">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h9.3a1.5 1.5 0 0 0 1.5-1.1L22 7H6"/></svg>
+        <span class="contador" data-test="contador-carrito">0</span>
+      </a>
+      <span class="usuario-nombre"><span class="avatar" aria-hidden="true"></span><span data-test="nombre-usuario"></span></span>
+      <button type="button" class="boton-salir" data-test="cerrar-sesion">Cerrar sesión</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div data-test="paso-datos">
+    <div class="encabezado">
+      <div>
+        <span class="rotulo">Compra · Paso 2 de 2</span>
+        <h1>Datos de entrega</h1>
+        <p>Confirma a quién y dónde entregamos tu pedido.</p>
+      </div>
+    </div>
+
+    <div class="dos-columnas">
+      <section class="panel formulario">
+        <h2>Información de envío</h2>
+        <div class="alerta alerta-error oculto" role="alert" data-test="error"></div>
+        <form id="form-checkout" novalidate>
+          <div class="campo">
+            <label for="nombre">Nombre completo</label>
+            <input class="entrada" id="nombre" name="nombre" data-test="nombre" required maxlength="60" autocomplete="name" placeholder="Ej. Ana Torres">
+          </div>
+          <div class="campo">
+            <label for="direccion">Dirección de entrega</label>
+            <input class="entrada" id="direccion" name="direccion" data-test="direccion" required maxlength="120" autocomplete="street-address" placeholder="Ej. Av. Javier Prado Este 1234, San Isidro">
+            <span class="ayuda">Entregas en Lima Metropolitana en 24 a 48 horas.</span>
+          </div>
+          <button class="boton boton-primario boton-ancho" type="submit" data-test="confirmar">Confirmar pedido</button>
+        </form>
+      </section>
+
+      <aside class="panel resumen">
+        <h2>Tu pedido</h2>
+        <div data-test="resumen-items"></div>
+        <div class="fila"><span>Envío</span><span>Gratis</span></div>
+        <div class="fila fila-total"><span>Total</span><span data-test="total">S/ 0.00</span></div>
+        <a class="seguir" href="/carrito">Volver al carrito</a>
+      </aside>
+    </div>
+  </div>
+
+  <section class="panel confirmacion oculto" data-test="pedido-confirmado">
+    <div class="sello">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>
+    </div>
+    <h1>Pedido confirmado</h1>
+    <p>Tu número de pedido es <span class="numero" data-test="numero-pedido"></span></p>
+    <p>Total pagado: <strong data-test="total-confirmado"></strong></p>
+    <p>Te avisaremos por correo cuando tu pedido salga a reparto.</p>
+    <div class="acciones">
+      <a class="boton boton-azul" href="/pedidos" data-test="ver-pedidos">Ver mis pedidos</a>
+      <a class="boton boton-borde" href="/catalogo">Seguir comprando</a>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="pie-interior">
+    <span>Canvia Market · Portal de práctica para la capacitación QA de Canvia</span>
+    <span><a href="/docs">Documentación de la API</a><a href="/examen">Examen</a></span>
+  </div>
+</footer>
+
+<script src="/js/app.js"></script>
+<script src="/js/checkout.js"></script>
+</body>
+</html>

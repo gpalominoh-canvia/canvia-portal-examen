@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo · Canvia Market</title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+<header class="barra">
+  <div class="barra-interior">
+    <a class="marca" href="/catalogo" aria-label="Canvia Market, ir al catálogo">
+      <img src="/img/logo-canvia-blanco.svg" alt="Canvia">
+      <span>Market</span>
+    </a>
+    <nav class="menu" aria-label="Principal">
+      <a href="/catalogo" data-pagina="catalogo">Catálogo</a>
+      <a href="/pedidos" data-pagina="pedidos" data-test="ir-a-pedidos">Mis pedidos</a>
+      <a href="/docs" data-pagina="docs">API</a>
+    </nav>
+    <div class="usuario">
+      <a class="enlace-carrito" href="/carrito" data-test="ir-al-carrito" aria-label="Ver carrito">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h9.3a1.5 1.5 0 0 0 1.5-1.1L22 7H6"/></svg>
+        <span class="contador" data-test="contador-carrito">0</span>
+      </a>
+      <span class="usuario-nombre"><span class="avatar" aria-hidden="true"></span><span data-test="nombre-usuario"></span></span>
+      <button type="button" class="boton-salir" data-test="cerrar-sesion">Cerrar sesión</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="encabezado">
+    <div>
+      <span class="rotulo">Catálogo</span>
+      <h1>Productos</h1>
+      <p>Equipamiento de tecnología, oficina y hogar con entrega en Lima Metropolitana.</p>
+    </div>
+  </div>
+
+  <div class="panel herramientas">
+    <div class="buscador">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <label class="sr" for="buscar">Buscar productos</label>
+      <input class="entrada" id="buscar" type="search" data-test="buscar" placeholder="Buscar por nombre de producto" autocomplete="off">
+    </div>
+    <label class="sr" for="categoria">Categoría</label>
+    <select class="selector" id="categoria" data-test="categoria">
+      <option value="">Todas las categorías</option>
+    </select>
+    <label class="sr" for="ordenar">Ordenar</label>
+    <select class="selector" id="ordenar" data-test="ordenar">
+      <option value="nombre-asc">Nombre (A a Z)</option>
+      <option value="nombre-desc">Nombre (Z a A)</option>
+      <option value="precio-asc">Precio (menor a mayor)</option>
+      <option value="precio-desc">Precio (mayor a menor)</option>
+    </select>
+  </div>
+
+  <p class="resumen-lista"><span data-test="resultados"></span></p>
+
+  <div class="cargando oculto" data-test="cargando"><span class="giro"></span> Cargando productos...</div>
+  <div class="rejilla" id="rejilla" data-test="lista-productos"></div>
+  <div class="panel vacio oculto" data-test="sin-resultados">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M8.5 11h5"/></svg>
+    <h2>No encontramos productos</h2>
+    <p>Prueba con otro término de búsqueda o cambia la categoría.</p>
+  </div>
+</main>
+
+<footer class="pie">
+  <div class="pie-interior">
+    <span>Canvia Market · Portal de práctica para la capacitación QA de Canvia</span>
+    <span><a href="/docs">Documentación de la API</a><a href="/examen">Examen</a></span>
+  </div>
+</footer>
+
+<script src="/js/app.js"></script>
+<script src="/js/catalogo.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "canvia-portal-examen",
+  "version": "1.0.0",
+  "description": "Portal Canvia Market: API y tienda web para el examen final de la capacitación QA de Canvia",
+  "main": "server.js",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  }
+}

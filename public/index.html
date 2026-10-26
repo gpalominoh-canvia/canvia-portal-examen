@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iniciar sesión · Canvia Market</title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+  <div class="login">
+    <section class="login-marca">
+      <img src="/img/logo-canvia-blanco.svg" alt="Canvia">
+      <div>
+        <span class="rotulo" style="color:#ffb48a">Portal Canvia Market</span>
+        <h1>Tecnología y equipamiento para tu <em>oficina</em>, en un solo lugar.</h1>
+        <p>Explora el catálogo, arma tu carrito y haz seguimiento a tus pedidos desde cualquier dispositivo.</p>
+        <ul class="puntos">
+          <li>Catálogo con búsqueda, filtros y orden</li>
+          <li>Carrito y compra en dos pasos</li>
+          <li>Historial y estado de tus pedidos</li>
+        </ul>
+      </div>
+      <small>Entorno de práctica de la capacitación QA de Canvia. Los datos se guardan en memoria.</small>
+    </section>
+
+    <section class="login-form">
+      <div class="panel tarjeta-login">
+        <h2>Iniciar sesión</h2>
+        <p>Ingresa con tu usuario corporativo.</p>
+
+        <div class="alerta alerta-error oculto" role="alert" data-test="error"></div>
+
+        <form id="form-login" novalidate>
+          <div class="campo">
+            <label for="usuario">Usuario</label>
+            <input class="entrada" id="usuario" name="usuario" data-test="usuario" autocomplete="username" placeholder="Ej. ana">
+          </div>
+          <div class="campo">
+            <label for="clave">Clave</label>
+            <input class="entrada" id="clave" name="clave" type="password" data-test="clave" autocomplete="current-password" placeholder="Tu clave">
+          </div>
+          <button class="boton boton-primario boton-ancho" type="submit" data-test="ingresar">Ingresar</button>
+        </form>
+
+        <div class="usuarios-prueba">
+          <h3>Usuarios de prueba</h3>
+          <ul>
+            <li><code>ana</code> usuario habitual</li>
+            <li><code>bloqueado</code> sin acceso</li>
+            <li><code>lento</code> red lenta</li>
+            <li><code>errores</code> versión anterior</li>
+          </ul>
+          Clave para todos: <code>canvia123</code>
+        </div>
+        <div class="login-enlaces">
+          <a href="/docs">Documentación de la API</a>
+          <a href="/examen">Enunciados del examen</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/login.js"></script>
+</body>
+</html>

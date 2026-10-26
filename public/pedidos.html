@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mis pedidos · Canvia Market</title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+<header class="barra">
+  <div class="barra-interior">
+    <a class="marca" href="/catalogo" aria-label="Canvia Market, ir al catálogo">
+      <img src="/img/logo-canvia-blanco.svg" alt="Canvia">
+      <span>Market</span>
+    </a>
+    <nav class="menu" aria-label="Principal">
+      <a href="/catalogo" data-pagina="catalogo">Catálogo</a>
+      <a href="/pedidos" data-pagina="pedidos" data-test="ir-a-pedidos">Mis pedidos</a>
+      <a href="/docs" data-pagina="docs">API</a>
+    </nav>
+    <div class="usuario">
+      <a class="enlace-carrito" href="/carrito" data-test="ir-al-carrito" aria-label="Ver carrito">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h9.3a1.5 1.5 0 0 0 1.5-1.1L22 7H6"/></svg>
+        <span class="contador" data-test="contador-carrito">0</span>
+      </a>
+      <span class="usuario-nombre"><span class="avatar" aria-hidden="true"></span><span data-test="nombre-usuario"></span></span>
+      <button type="button" class="boton-salir" data-test="cerrar-sesion">Cerrar sesión</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="encabezado">
+    <div>
+      <span class="rotulo">Cuenta</span>
+      <h1>Mis pedidos</h1>
+      <p>Historial de compras y estado de cada pedido.</p>
+    </div>
+    <a class="boton boton-borde" href="/catalogo">Seguir comprando</a>
+  </div>
+
+  <div class="cargando oculto" data-test="cargando"><span class="giro"></span> Cargando pedidos...</div>
+  <section class="panel oculto" data-test="historial">
+    <table class="tabla">
+      <thead>
+        <tr><th>Pedido</th><th>Fecha</th><th>Productos</th><th class="derecha">Total</th><th>Estado</th></tr>
+      </thead>
+      <tbody data-test="lista-pedidos"></tbody>
+    </table>
+  </section>
+  <section class="panel vacio oculto" data-test="sin-pedidos">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+    <h2>Aún no tienes pedidos</h2>
+    <p>Cuando confirmes una compra, la verás aquí.</p>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="pie-interior">
+    <span>Canvia Market · Portal de práctica para la capacitación QA de Canvia</span>
+    <span><a href="/docs">Documentación de la API</a><a href="/examen">Examen</a></span>
+  </div>
+</footer>
+
+<script src="/js/app.js"></script>
+<script src="/js/pedidos.js"></script>
+</body>
+</html>

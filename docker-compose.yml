@@ -1,0 +1,10 @@
+services:
+  portal:
+    build: .
+    image: canvia-portal-examen:latest
+    container_name: canvia-portal-examen
+    ports:
+      - "${PORTAL_PUERTO:-3000}:3000"
+    environment:
+      PORT: "3000"
+    restart: unless-stopped

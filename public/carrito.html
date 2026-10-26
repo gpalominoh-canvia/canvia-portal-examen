@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Carrito · Canvia Market</title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+<header class="barra">
+  <div class="barra-interior">
+    <a class="marca" href="/catalogo" aria-label="Canvia Market, ir al catálogo">
+      <img src="/img/logo-canvia-blanco.svg" alt="Canvia">
+      <span>Market</span>
+    </a>
+    <nav class="menu" aria-label="Principal">
+      <a href="/catalogo" data-pagina="catalogo">Catálogo</a>
+      <a href="/pedidos" data-pagina="pedidos" data-test="ir-a-pedidos">Mis pedidos</a>
+      <a href="/docs" data-pagina="docs">API</a>
+    </nav>
+    <div class="usuario">
+      <a class="enlace-carrito" href="/carrito" data-test="ir-al-carrito" aria-label="Ver carrito">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h9.3a1.5 1.5 0 0 0 1.5-1.1L22 7H6"/></svg>
+        <span class="contador" data-test="contador-carrito">0</span>
+      </a>
+      <span class="usuario-nombre"><span class="avatar" aria-hidden="true"></span><span data-test="nombre-usuario"></span></span>
+      <button type="button" class="boton-salir" data-test="cerrar-sesion">Cerrar sesión</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="encabezado">
+    <div>
+      <span class="rotulo">Compra</span>
+      <h1>Tu carrito</h1>
+      <p>Revisa los productos antes de continuar con el pago.</p>
+    </div>
+  </div>
+
+  <div class="dos-columnas" data-test="contenido-carrito">
+    <section class="panel">
+      <ul class="lista-carrito" data-test="lista-carrito"></ul>
+      <div class="vacio oculto" data-test="carrito-vacio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h9.3a1.5 1.5 0 0 0 1.5-1.1L22 7H6"/></svg>
+        <h2>Tu carrito está vacío</h2>
+        <p>Agrega productos desde el catálogo para empezar tu compra.</p>
+        <p><a class="boton boton-azul" href="/catalogo">Ir al catálogo</a></p>
+      </div>
+    </section>
+
+    <aside class="panel resumen">
+      <h2>Resumen del pedido</h2>
+      <div class="fila"><span>Productos</span><span data-test="unidades-resumen">0</span></div>
+      <div class="fila"><span>Envío</span><span>Gratis</span></div>
+      <div class="fila fila-total"><span>Total</span><span data-test="total">S/ 0.00</span></div>
+      <button type="button" class="boton boton-primario boton-ancho" data-test="ir-a-pagar">Ir a pagar</button>
+      <a class="seguir" href="/catalogo" data-test="seguir-comprando">Seguir comprando</a>
+      <div class="nota-seguridad">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Pago seguro. Precios en soles, IGV incluido.
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer class="pie">
+  <div class="pie-interior">
+    <span>Canvia Market · Portal de práctica para la capacitación QA de Canvia</span>
+    <span><a href="/docs">Documentación de la API</a><a href="/examen">Examen</a></span>
+  </div>
+</footer>
+
+<script src="/js/app.js"></script>
+<script src="/js/carrito.js"></script>
+</body>
+</html>
